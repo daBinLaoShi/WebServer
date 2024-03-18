@@ -36,14 +36,14 @@ private:
     void ErrorHtml_();
     std::string GetFileType_();
 
-    int code_;
-    bool isKeepAlive_;
+    int code_;//表示某种代码或状态
+    bool isKeepAlive_;//表示是否保持连接活动状态
 
-    std::string path_;
-    std::string srcDir_;
+    std::string path_;//保存路径
+    std::string srcDir_;//源目录
     
-    char* mmFile_; 
-    struct stat mmFileStat_;
+    char* mmFile_; //操作文件内容
+    struct stat mmFileStat_;//存储文件的状态信息
 
     static const std::unordered_map<std::string, std::string> SUFFIX_TYPE;
     static const std::unordered_map<int, std::string> CODE_STATUS;

@@ -43,6 +43,7 @@ public:
     
     bool process();
 
+    // 表示待写入的字节数
     int ToWriteBytes() { 
         return iov_[0].iov_len + iov_[1].iov_len; 
     }
@@ -57,19 +58,19 @@ public:
     
 private:
    
-    int fd_;
-    struct  sockaddr_in addr_;
+    int fd_; // 网络连接的文件描述符
+    struct  sockaddr_in addr_; // 服务器的地址信息
 
-    bool isClose_;
+    bool isClose_; // 当前连接是否关闭
     
-    int iovCnt_;
-    struct iovec iov_[2];
+    int iovCnt_; // 当前 I/O 向量的数量
+    struct iovec iov_[2]; // 用于进行分散/聚集 I/O 操作。
     
-    Buffer readBuff_; // 读缓冲区
-    Buffer writeBuff_; // 写缓冲区
+    Buffer readBuff_; // 存储读取数据的缓冲区
+    Buffer writeBuff_; // 存储写入数据的缓冲区
 
-    HttpRequest request_;
-    HttpResponse response_;
+    HttpRequest request_; // 当前连接的 HTTP 请求对象
+    HttpResponse response_; // 当前连接的 HTTP 响应对象
 };
 
 

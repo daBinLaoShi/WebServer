@@ -55,8 +55,8 @@ private:
 
     static int SetFdNonblock(int fd);
 
-    int port_;
-    bool openLinger_;
+    int port_; // 端口
+    bool openLinger_; // 优雅退出
     int timeoutMS_;  /* 毫秒MS */
     bool isClose_;
     int listenFd_;

@@ -11,13 +11,15 @@
 /* 资源在对象构造初始化 资源在对象析构时释放*/
 class SqlConnRAII {
 public:
+    // 构造函数
     SqlConnRAII(MYSQL** sql, SqlConnPool *connpool) {
         assert(connpool);
         *sql = connpool->GetConn();
         sql_ = *sql;
         connpool_ = connpool;
     }
-    
+
+    // 析构函数
     ~SqlConnRAII() {
         if(sql_) { connpool_->FreeConn(sql_); }
     }

@@ -13,6 +13,7 @@
 #include <vector> //readv
 #include <atomic>
 #include <assert.h>
+
 class Buffer {
 public:
     Buffer(int initBuffSize = 1024);
@@ -48,9 +49,9 @@ private:
     const char* BeginPtr_() const;
     void MakeSpace_(size_t len);
 
-    std::vector<char> buffer_;
-    std::atomic<std::size_t> readPos_;
-    std::atomic<std::size_t> writePos_;
+    std::vector<char> buffer_; // 存储实际的数据
+    std::atomic<std::size_t> readPos_; // 表示当前读取位置的索引
+    std::atomic<std::size_t> writePos_; // 表示当前写入位置的索引
 };
 
 #endif //BUFFER_H
