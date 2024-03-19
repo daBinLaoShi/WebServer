@@ -24,9 +24,9 @@ SqlConnPool* SqlConnPool::Instance() {
 void SqlConnPool::Init(const char* host, int port,
             const char* user,const char* pwd, const char* dbName,
             int connSize = 10) {
-    assert(connSize > 0); // 断言连接池的大小必须大于0，如果不满足该条件，程序将会终止，并输出错误信息。
+    assert(connSize > 0); //连接池的大小必须大于0
     for (int i = 0; i < connSize; i++) {
-        MYSQL *sql = nullptr; // 创建一个 MYSQL 对象 sql
+        MYSQL *sql = nullptr; //创建一个MYSQL对象
         sql = mysql_init(sql); // 进行初始化
         if (!sql) { // 初始化失败
             LOG_ERROR("MySql init error!");

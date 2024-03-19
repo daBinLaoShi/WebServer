@@ -58,7 +58,7 @@ private:
 
     void SwapNode_(size_t i, size_t j);
 
-    std::vector<TimerNode> heap_;
+    std::vector<TimerNode> heap_;//小根堆
 
     std::unordered_map<int, size_t> ref_;
 };

@@ -16,10 +16,10 @@
 
 class ThreadPool {
 public:
-    // 代参构造函数
+    // 带参构造函数
     explicit ThreadPool(size_t threadCount = 8): pool_(std::make_shared<Pool>()) {
             assert(threadCount > 0);
-            for(size_t i = 0; i < threadCount; i++) {
+            for(size_t i = 0; i < threadCount; i++) {//根据线程数量创建线程
                 std::thread([pool = pool_] {
                     std::unique_lock<std::mutex> locker(pool->mtx); // 创建了一个独占锁 locker，锁定了线程池的互斥量 pool->mtx
                     while(true) {
@@ -65,14 +65,14 @@ public:
     }
 
 private:
-    // 用于线程池管理的数据结构和状态
+    //线程池
     struct Pool {
-        std::mutex mtx; // 互斥量 mtx 用于在多线程环境下对共享资源进行互斥访问
-        std::condition_variable cond; // 条件变量 cond 用于在多线程环境下实现线程的等待和通知机制
-        bool isClosed; // 指示线程池是否已关闭
-        std::queue<std::function<void()>> tasks; // 任务队列 tasks 用于存储待执行的任务
+        std::mutex mtx; //互斥量
+        std::condition_variable cond; //条件变量
+        bool isClosed; //指示线程池是否已关闭
+        std::queue<std::function<void()>> tasks; // 任务队列
     };
-    std::shared_ptr<Pool> pool_;
+    std::shared_ptr<Pool> pool_;//线程池
 };
 
 
