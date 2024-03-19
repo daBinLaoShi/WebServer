@@ -22,12 +22,12 @@ typedef std::chrono::milliseconds MS;
 typedef Clock::time_point TimeStamp;
 
 struct TimerNode {
-    int id;
-    TimeStamp expires;
-    TimeoutCallBack cb;
+    int id; //标识定时器节点
+    TimeStamp expires;//定时器节点的过期时间
+    TimeoutCallBack cb;//定时器节点的回调函数，当定时器到期时会调用该回调函数。
     bool operator<(const TimerNode& t) {
         return expires < t.expires;
-    }
+    }//用于比较两个 TimerNode 对象的过期时间
 };
 class HeapTimer {
 public:
