@@ -31,13 +31,13 @@ private:
     SqlConnPool();
     ~SqlConnPool();
 
-    int MAX_CONN_;
-    int useCount_;
-    int freeCount_;
+    int MAX_CONN_; // 最大连接数
+    int useCount_; // 正在使用的连接数
+    int freeCount_; // 空闲的连接数
 
-    std::queue<MYSQL *> connQue_;
-    std::mutex mtx_;
-    sem_t semId_;
+    std::queue<MYSQL *> connQue_; // 用于存放初始化好的sql数据库连接队列
+    std::mutex mtx_; // 互斥量
+    sem_t semId_; // 信号量
 };
 
 

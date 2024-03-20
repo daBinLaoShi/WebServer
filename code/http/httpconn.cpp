@@ -6,8 +6,8 @@
 #include "httpconn.h"
 using namespace std;
 
-const char* HttpConn::srcDir; // 存储 HTTP 服务器的根目录
-std::atomic<int> HttpConn::userCount; // 记录当前连接的用户数量。
+const char* HttpConn::srcDir; // HTTP服务器的根目录
+std::atomic<int> HttpConn::userCount; // 连接的用户数量。
 bool HttpConn::isET; // 是否采用边缘触发模式
 
 // 默认构造函数

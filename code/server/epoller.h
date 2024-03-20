@@ -28,9 +28,9 @@ public:
     uint32_t GetEvents(size_t i) const;
         
 private:
-    int epollFd_;
+    int epollFd_; // 存储epoll实例的文件描述符
 
-    std::vector<struct epoll_event> events_;    
+    std::vector<struct epoll_event> events_; // 保存由epoll实例监视的事件列表
 };
 
 #endif //EPOLLER_H

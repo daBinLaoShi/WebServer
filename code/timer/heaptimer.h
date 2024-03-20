@@ -31,7 +31,7 @@ struct TimerNode {
 };
 class HeapTimer {
 public:
-    HeapTimer() { heap_.reserve(64); }
+    HeapTimer() { heap_.reserve(64); } // 预先分配内存空间，大小为 64
 
     ~HeapTimer() { clear(); }
     

@@ -20,14 +20,14 @@ WebServer::WebServer(
             port_(port), openLinger_(OptLinger), timeoutMS_(timeoutMS), isClose_(false),
             timer_(new HeapTimer()), threadpool_(new ThreadPool(threadNum)), epoller_(new Epoller())
     {
-    srcDir_ = getcwd(nullptr, 256); // 获取当前工作目录
-    assert(srcDir_); // 在代码中加入断言
-    strncat(srcDir_, "/resources/", 16); // 将"/resources/"字符串连接到srcDir_字符串的末尾
-    HttpConn::userCount = 0; // 将HttpConn类的静态成员变量userCount设置为0
-    HttpConn::srcDir = srcDir_; // 将HttpConn类的静态成员变量srcDir设置为先前获取的工作目录路径
-    SqlConnPool::Instance()->Init("localhost", sqlPort, sqlUser, sqlPwd, dbName, connPoolNum); // 数据库连接池初始化------------------------------------------ 调用了SqlConnPool类的静态成员函数Instance()获取其单例对象，然后调用Init()函数对数据库连接池进行初始化
+    srcDir_ = getcwd(nullptr, 256); // 返回当前工作目录的路径名
+    assert(srcDir_);
+    strncat(srcDir_, "/resources/", 16); // 将"/resources/"字符串连接到末尾
+    HttpConn::userCount = 0; // 连接的用户数量
+    HttpConn::srcDir = srcDir_; // HTTP服务器的根目录
+    SqlConnPool::Instance()->Init("localhost", sqlPort, sqlUser, sqlPwd, dbName, connPoolNum); // 创建一个数据库连接池------------------------------------------ 调用了SqlConnPool类的静态成员函数Instance()获取其单例对象，然后调用Init()函数对数据库连接池进行初始化
 
-    InitEventMode_(trigMode); // 初始化事件模式 ----------------------------------------------------------------------------------------------
+    InitEventMode_(trigMode); // 初始化事件模式为ET模式(3) ----------------------------------------------------------------------------------------------
     if(!InitSocket_()) { isClose_ = true;} // 初始化套接字 -----------------------------------------------------------------------------------
 
     // 日志记录
@@ -57,8 +57,8 @@ WebServer::~WebServer() {
 
 // 初始化事件模式
 void WebServer::InitEventMode_(int trigMode) {
-    listenEvent_ = EPOLLRDHUP;
-    connEvent_ = EPOLLONESHOT | EPOLLRDHUP;
+    listenEvent_ = EPOLLRDHUP; // 监听事件;EPOLLRDHUP是epoll中的一个事件类型，指示对端关闭了连接
+    connEvent_ = EPOLLONESHOT | EPOLLRDHUP; // 连接事件;EPOLLONESHOT表示事件在被触发后只会发生一次
     switch (trigMode)
     {
     case 0:
@@ -70,7 +70,7 @@ void WebServer::InitEventMode_(int trigMode) {
         listenEvent_ |= EPOLLET;
         break;
     case 3:
-        listenEvent_ |= EPOLLET;
+        listenEvent_ |= EPOLLET; // EPOLLET 是 epoll 中的一个事件标志，表示使用边缘触发模式。在边缘触发模式下，只有在事件状态发生变化时才会通知
         connEvent_ |= EPOLLET;
         break;
     default:
@@ -230,14 +230,14 @@ void WebServer::OnWrite_(HttpConn* client) {
 bool WebServer::InitSocket_() {
     int ret;
     struct sockaddr_in addr; // 套接字地址信息
-    if(port_ > 65535 || port_ < 1024) { // 检查 port_ 变量是否在有效范围内
+    if(port_ > 65535 || port_ < 1024) { // 检查端口是否在有效范围内
         LOG_ERROR("Port:%d error!",  port_);
         return false;
     }
-    addr.sin_family = AF_INET; // 设置 addr.sin_family 为 AF_INET，表示使用 IPv4 地址。
-    addr.sin_addr.s_addr = htonl(INADDR_ANY); // 将套接字绑定到本地任意可用的 IP 地址上
-    addr.sin_port = htons(port_); // 将 port_ 转换为网络字节序，并存储在 addr.sin_port 中
-    struct linger optLinger = { 0 };
+    addr.sin_family = AF_INET; // 设置addr.sin_family为 AF_INET，表示使用IPv4地址。
+    addr.sin_addr.s_addr = htonl(INADDR_ANY); //将套接字绑定到本地任意可用的IP地址上
+    addr.sin_port =htons(port_); // 将port_转换为网络字节序，并存储在addr.sin_port 中
+    struct linger optLinger = { 0 }; // 优雅关闭结构体
     if(openLinger_) {
         /* 优雅关闭: 直到所剩数据发送完毕或超时 */
         optLinger.l_onoff = 1; // 启用优雅关闭
@@ -250,7 +250,7 @@ bool WebServer::InitSocket_() {
         return false;
     }
 
-    ret = setsockopt(listenFd_, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger)); // 设置套接字 listenFd_ 的 SO_LINGER 选项
+    ret = setsockopt(listenFd_, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger)); // 设置套接字listenFd_的SO_LINGER选项
     if(ret < 0) { // 设置失败
         close(listenFd_);
         LOG_ERROR("Init linger error!", port_);
@@ -260,7 +260,7 @@ bool WebServer::InitSocket_() {
     int optval = 1;
     /* 端口复用 */
     /* 只有最后一个套接字会正常接收数据。 */
-    ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int)); // 设置套接字选项 SO_REUSEADDR
+    ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int)); // 设置套接字选项SO_REUSEADDR
     if(ret == -1) { //设置失败
         LOG_ERROR("set socket setsockopt error !");
         close(listenFd_);
@@ -280,7 +280,7 @@ bool WebServer::InitSocket_() {
         close(listenFd_); // 关闭套接字 listenFd_
         return false;
     }
-    ret = epoller_->AddFd(listenFd_,  listenEvent_ | EPOLLIN); // 将套接字添加到 epoll 实例中进行事件监听
+    ret = epoller_->AddFd(listenFd_,  listenEvent_ | EPOLLIN); // 将套接字添加到epoll实例中进行事件监听
     if(ret == 0) {
         LOG_ERROR("Add listen error!");
         close(listenFd_);

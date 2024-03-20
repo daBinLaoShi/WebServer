@@ -9,8 +9,8 @@ using namespace std;
 
 // 默认构造函数
 SqlConnPool::SqlConnPool() {
-    useCount_ = 0; // 使用计数
-    freeCount_ = 0; // 空闲连接计数
+    useCount_ = 0; // 正在使用的连接数
+    freeCount_ = 0; // 空闲的连接数
 }
 
 // 获取 SqlConnPool 类的单例对象
@@ -24,24 +24,24 @@ SqlConnPool* SqlConnPool::Instance() {
 void SqlConnPool::Init(const char* host, int port,
             const char* user,const char* pwd, const char* dbName,
             int connSize = 10) {
-    assert(connSize > 0); //连接池的大小必须大于0
+    assert(connSize > 0);
     for (int i = 0; i < connSize; i++) {
         MYSQL *sql = nullptr; //创建一个MYSQL对象
-        sql = mysql_init(sql); // 进行初始化
+        sql = mysql_init(sql); // MYSQL进行初始化
         if (!sql) { // 初始化失败
             LOG_ERROR("MySql init error!");
             assert(sql);
         }
         sql = mysql_real_connect(sql, host,
                                  user, pwd,
-                                 dbName, port, nullptr, 0); // 连接到 MySQL 服务器
-        if (!sql) { // 连接失败记录日志
+                                 dbName, port, nullptr, 0); // 连接到MySQL服务器
+        if (!sql) { // 连接失败
             LOG_ERROR("MySql Connect error!");
         }
         connQue_.push(sql); // 加入数据库连接池队列
     }
     MAX_CONN_ = connSize;
-    sem_init(&semId_, 0, MAX_CONN_); // 始化一个信号量 semId_，用于控制连接的获取和释放
+    sem_init(&semId_, 0, MAX_CONN_); // 始化一个信号量semId_
 }
 
 // 从连接池中获取一个 MYSQL 连接对象

@@ -58,16 +58,16 @@ private:
     int port_; // 端口
     bool openLinger_; // 优雅退出
     int timeoutMS_;  /* 毫秒MS */
-    bool isClose_;
-    int listenFd_;
-    char* srcDir_;
+    bool isClose_; //服务器状态
+    int listenFd_; // 监听文件描述符
+    char* srcDir_; // 目录
     
-    uint32_t listenEvent_;
-    uint32_t connEvent_;
+    uint32_t listenEvent_; // 监听事件
+    uint32_t connEvent_; // 连接事件
    
-    std::unique_ptr<HeapTimer> timer_;
-    std::unique_ptr<ThreadPool> threadpool_;
-    std::unique_ptr<Epoller> epoller_;
+    std::unique_ptr<HeapTimer> timer_;//基于小根堆实现的定时器
+    std::unique_ptr<ThreadPool> threadpool_;//线程池
+    std::unique_ptr<Epoller> epoller_;//IO复用技术Epoll
     std::unordered_map<int, HttpConn> users_;
 };
 

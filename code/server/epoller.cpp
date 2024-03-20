@@ -7,7 +7,7 @@
 #include "epoller.h"
 
 // 构造函数
-Epoller::Epoller(int maxEvent):epollFd_(epoll_create(512)), events_(maxEvent){ // epoll_create(512)创建一个 epoll 实例
+Epoller::Epoller(int maxEvent):epollFd_(epoll_create(512)), events_(maxEvent){ // epoll_create(512)创建一个epoll实例,参数 512 是 epoll 实例能够监视的文件描述符的初始数量的建议值
     assert(epollFd_ >= 0 && events_.size() > 0);
 }
 
