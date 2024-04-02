@@ -60,7 +60,7 @@ private:
 
     std::vector<TimerNode> heap_;//小根堆
 
-    std::unordered_map<int, size_t> ref_;
+    std::unordered_map<int, size_t> ref_;//记录各个id的位置
 };
 
 #endif //HEAP_TIMER_H

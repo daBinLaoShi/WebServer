@@ -7,9 +7,9 @@
 
 //向上调整
 void HeapTimer::siftup_(size_t i) {
-    assert(i >= 0 && i < heap_.size());//确保指定的索引位置在有效范围内
-    size_t j = (i - 1) / 2;
-    while(j >= 0) {//计算节点 i 的父节点索引
+    assert(i >= 0 && i < heap_.size());
+    size_t j = (i - 1) / 2;//计算节点 i 的父节点索引
+    while(j >= 0) {
         if(heap_[j] < heap_[i]) { break; }
         SwapNode_(i, j);//首先检查节点 i 是否小于其父节点 j
         i = j;
@@ -46,20 +46,20 @@ bool HeapTimer::siftdown_(size_t index, size_t n) {
 void HeapTimer::add(int id, int timeout, const TimeoutCallBack& cb) {
     assert(id >= 0);
     size_t i;
-    if(ref_.count(id) == 0) {//检查 ref_ 中是否已经存在指定 id 的节点
-        /* 新节点：堆尾插入，调整堆 */
+    if(ref_.count(id) == 0) {//检查是否已经存在指定id节点
+                             //新节点：堆尾插入，调整堆
         i = heap_.size();
         ref_[id] = i;
-        heap_.push_back({id, Clock::now() + MS(timeout), cb});
-        siftup_(i);
+        heap_.push_back({id, Clock::now() + MS(timeout), cb}); // id、过期时间以及调用函数
+        siftup_(i); //向上调整堆
     } 
     else {
-        /* 已有结点：调整堆 */
+        // 已有结点：调整堆
         i = ref_[id];
-        heap_[i].expires = Clock::now() + MS(timeout);
-        heap_[i].cb = cb;
-        if(!siftdown_(i, heap_.size())) {
-            siftup_(i);
+        heap_[i].expires = Clock::now() + MS(timeout); // 更新过期时间
+        heap_[i].cb = cb; // 更新过期函数
+        if(!siftdown_(i, heap_.size())) { // 向下调整位置
+            siftup_(i); //向上调整位置
         }
     }
 }
@@ -95,12 +95,11 @@ void HeapTimer::del_(size_t index) {
     heap_.pop_back();//将队尾元素从堆中移除
 }
 
-//整指定 id 的定时器节点的超时时间
+//重新调整定时器节点的超时时间
 void HeapTimer::adjust(int id, int timeout) {
-    /* 调整指定id的结点 */
-    assert(!heap_.empty() && ref_.count(id) > 0);//确保堆不为空，并且指定的 id 在 ref_ 中存在（即存在于堆中）
-    heap_[ref_[id]].expires = Clock::now() + MS(timeout);//更新指定 id 的定时器节点的过期时间
-    siftdown_(ref_[id], heap_.size());//重新调整堆
+    assert(!heap_.empty() && ref_.count(id) > 0);
+    heap_[ref_[id]].expires = Clock::now() + MS(timeout);//更新定时器节点的过期时间
+    siftdown_(ref_[id], heap_.size());//向下调整堆
 }
 
 //处理堆中已经超时的定时器节点

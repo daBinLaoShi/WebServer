@@ -71,13 +71,13 @@ void HttpResponse::Init(const string& srcDir, string& path, bool isKeepAlive, in
     mmFileStat_ = { 0 };
 }
 
-//根据请求的资源文件生成 HTTP 响应
+//根据请求的资源文件生成HTTP响应
 void HttpResponse::MakeResponse(Buffer& buff) {
-    /* 判断请求的资源文件 */
+                                                //判断请求的资源文件
     if(stat((srcDir_ + path_).data(), &mmFileStat_) < 0 || S_ISDIR(mmFileStat_.st_mode)) {//调用 stat 函数来获取请求资源文件的状态信息，并将其存储在 mmFileStat_ 结构体中。如果获取失败（返回值小于0）或者请求的资源是一个目录
-        code_ = 404;//将 HTTP 状态码设置为404（表示未找到资源）
+        code_ = 404;//状态码设置为404（表示未找到资源）
     }
-    else if(!(mmFileStat_.st_mode & S_IROTH)) {//如果请求的资源文件的权限不允许其他用户读取（S_IROTH 标志未设置）
+    else if(!(mmFileStat_.st_mode & S_IROTH)) {//如果请求的资源文件的权限不允许其他用户读取
         code_ = 403;//HTTP 状态码设置为403（表示禁止访问）
     }
     else if(code_ == -1) { //之前未设置状态码（code_ 等于 -1）
@@ -130,24 +130,23 @@ void HttpResponse::AddHeader_(Buffer& buff) {
     buff.Append("Content-type: " + GetFileType_() + "\r\n");//调用 GetFileType_() 函数获取文件类型，并将其添加到头部中。
 }
 
-//向 HTTP 响应中添加内容
+//向HTTP响应中添加内容
 void HttpResponse::AddContent_(Buffer& buff) {
-    int srcFd = open((srcDir_ + path_).data(), O_RDONLY);//使用 open 函数打开请求的资源文件，并获取文件描述符 srcFd。
+    int srcFd = open((srcDir_ + path_).data(), O_RDONLY);//打开请求的资源文件
     if(srcFd < 0) { 
         ErrorContent(buff, "File NotFound!");
         return; 
     }
 
-    /* 将文件映射到内存提高文件的访问速度 
-        MAP_PRIVATE 建立一个写入时拷贝的私有映射*/
+    // 将文件映射到内存提高文件的访问速度,MAP_PRIVATE建立一个写入时拷贝的私有映射
     LOG_DEBUG("file path %s", (srcDir_ + path_).data());
-    int* mmRet = (int*)mmap(0, mmFileStat_.st_size, PROT_READ, MAP_PRIVATE, srcFd, 0);//使用 mmap 函数将文件映射到内存中，以提高文件的访问速度。mmap 函数返回映射到内存的起始地址，如果映射失败，则返回 -1。
+    int* mmRet = (int*)mmap(0, mmFileStat_.st_size, PROT_READ, MAP_PRIVATE, srcFd, 0);//使用mmap函数将文件映射到内存中，以提高文件的访问速度。mmap 函数返回映射到内存的起始地址，如果映射失败，则返回 -1。
     if(*mmRet == -1) {
         ErrorContent(buff, "File NotFound!");
         return; 
     }
     mmFile_ = (char*)mmRet;
-    close(srcFd);
+    close(srcFd); // 关闭文件
     buff.Append("Content-length: " + to_string(mmFileStat_.st_size) + "\r\n\r\n");
 }
 

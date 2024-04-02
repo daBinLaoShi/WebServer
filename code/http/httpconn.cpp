@@ -30,7 +30,7 @@ void HttpConn::init(int fd, const sockaddr_in& addr) {
     fd_ = fd; // 将传入的文件描述符 fd 赋值给成员变量 fd_
     writeBuff_.RetrieveAll(); // 清空写缓冲区
     readBuff_.RetrieveAll(); // 清空读缓冲区
-    isClose_ = false; // 表示当前连接处于打开状态。
+    isClose_ = false; // 连接状态
     LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, GetIP(), GetPort(), (int)userCount); // 记录连接建立的日志信息
 }
 
@@ -65,15 +65,15 @@ int HttpConn::GetPort() const {
     return addr_.sin_port;
 }
 
-// 从套接字文件描述符中读取数据到读缓冲区中
+// 客户端读取数据，存放在读缓冲区中
 ssize_t HttpConn::read(int* saveErrno) {
     ssize_t len = -1;
     do {
-        len = readBuff_.ReadFd(fd_, saveErrno);//调用 readBuff_ 对象的 ReadFd 方法从套接字文件描述符 fd_ 中读取数据到读缓冲区中。这个方法会返回读取的字节数。
+        len = readBuff_.ReadFd(fd_, saveErrno);//从fd_中读取数据到读缓冲区中。返回读取的字节数。
         if (len <= 0) {
             break;
         }
-    } while (isET); // isET 变量用于表示是否使用了边缘触发模式。
+    } while (isET); // 是否使用了边缘触发模式。
     return len;
 }
 
@@ -81,13 +81,13 @@ ssize_t HttpConn::read(int* saveErrno) {
 ssize_t HttpConn::write(int* saveErrno) {
     ssize_t len = -1;
     do {
-        len = writev(fd_, iov_, iovCnt_); // 调用 writev 函数将分散的数据一并写入到套接字文件描述符中，并返回写入的字节数。
+        len = writev(fd_, iov_, iovCnt_); // 调用writev函数将分散的数据一并写入到套接字文件描述符中，并返回写入的字节数。
         if(len <= 0) { //写入的字节数小于等于 0
             *saveErrno = errno; // 将错误码保存到指定的变量中
             break;
         }
-        if(iov_[0].iov_len + iov_[1].iov_len  == 0) { break; } //如果待发送的数据量为 0，表示传输结束，跳出循环。
-        else if(static_cast<size_t>(len) > iov_[0].iov_len) { // 如果写入的字节数大于第一个缓冲区中的数据量
+        if(iov_[0].iov_len + iov_[1].iov_len  == 0) { break; } //待发送的数据量为 0，表示传输结束，跳出循环。
+        else if(static_cast<size_t>(len) > iov_[0].iov_len) { // 写入的字节数大于第一个缓冲区中的数据量
             iov_[1].iov_base = (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len);// 更新 iov_ 数组中的数据信息，并将写缓冲区中已发送的数据部分删除。
             iov_[1].iov_len -= (len - iov_[0].iov_len);
             if(iov_[0].iov_len) {
@@ -104,17 +104,17 @@ ssize_t HttpConn::write(int* saveErrno) {
     return len;
 }
 
-// 用于处理 HTTP 请求
+// 处理HTTP请求
 bool HttpConn::process() {
-    request_.Init(); // 初始化 HTTP 请求对象。
-    if(readBuff_.ReadableBytes() <= 0) { // 如果读缓冲区中没有可读字节
+    request_.Init(); // 初始化HTTP请求对象。
+    if(readBuff_.ReadableBytes() <= 0) { // 读缓冲区无效
         return false;
     }
-    else if(request_.parse(readBuff_)) { // 如果能够成功解析 HTTP 请求
-        LOG_DEBUG("%s", request_.path().c_str()); // 记录请求路径的日志信息
-        response_.Init(srcDir, request_.path(), request_.IsKeepAlive(), 200); // 初始化 HTTP 响应对象，设置相应的路径、是否保持连接以及响应状态码。
+    else if(request_.parse(readBuff_)) { // 解析HTTP请求
+        LOG_DEBUG("%s", request_.path().c_str()); // 记录日志，解析成功
+        response_.Init(srcDir, request_.path(), request_.IsKeepAlive(), 200); // 初始化HTTP响应对象
     } else {
-        response_.Init(srcDir, request_.path(), false, 400); // 初始化 HTTP 响应对象，设置相应的路径、保持连接状态为 false，以及响应状态码为 400。
+        response_.Init(srcDir, request_.path(), false, 400);
     }
 
     response_.MakeResponse(writeBuff_); // 根据响应对象生成相应的响应内容，存储到写缓冲区中。
