@@ -1,13 +1,5 @@
-/*
- * @Author       : mark
- * @Date         : 2020-06-17
- * @copyleft Apache 2.0
- */
-
 #include "webserver.h"
-
 using namespace std;
-
 
 // 端口 ET模式 timeoutMs 优雅退出
 // sql端口、账号、密码、数据库
@@ -25,11 +17,11 @@ WebServer::WebServer(
     HttpConn::userCount = 0; // 连接的用户数量
     HttpConn::srcDir = srcDir_; // HTTP服务器的根目录
     SqlConnPool::Instance()->Init("localhost", sqlPort, sqlUser, sqlPwd, dbName,
-                                  connPoolNum); // 创建一个数据库连接池------------------------------------------ 调用了SqlConnPool类的静态成员函数Instance()获取其单例对象，然后调用Init()函数对数据库连接池进行初始化
+                                  connPoolNum); // 创建一个数据库连接池
 
     InitEventMode_(
-            trigMode); // 初始化事件模式为ET模式(3) ----------------------------------------------------------------------------------------------
-    if (!InitSocket_()) { isClose_ = true; } // 初始化套接字 -----------------------------------------------------------------------------------
+            trigMode); // 初始化事件模式为ET模式(3)
+    if (!InitSocket_()) { isClose_ = true; } // 初始化套接字
 
     // 日志记录
     if (openLog) {
@@ -70,7 +62,7 @@ void WebServer::InitEventMode_(int trigMode) {
             listenEvent_ |= EPOLLET;
             break;
         case 3:
-            listenEvent_ |= EPOLLET; // EPOLLET 是 epoll 中的一个事件标志，表示使用边缘触发模式。在边缘触发模式下，只有在事件状态发生变化时才会通知
+            listenEvent_ |= EPOLLET;
             connEvent_ |= EPOLLET;
             break;
         default:
@@ -115,7 +107,7 @@ void WebServer::Start() {
 // 向客户端发送错误信息并关闭连接
 void WebServer::SendError_(int fd, const char *info) {
     assert(fd > 0);
-    int ret = send(fd, info, strlen(info), 0); // 调用 send() 函数向客户端发送错误信息
+    int ret = send(fd, info, strlen(info), 0); // 调用send()函数向客户端发送错误信息
     if (ret < 0) { // 表示发送错误
         LOG_WARN("send error to client[%d] error!", fd);
     }

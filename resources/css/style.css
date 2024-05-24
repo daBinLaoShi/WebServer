@@ -17,17 +17,20 @@ html, body {
 
 
 /*---------------------------------------
-  Typorgraphy              
+  Typorgraphy
 -----------------------------------------*/
 
-h1,h2,h3,h4,h5,h6 {
+h2,h3,h4,h5,h6 {
   font-style: normal;
   font-weight: 200;
   letter-spacing: 0px;
 }
 
 h1 {
-  color: #3d3d3f;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0px;
+  color: #FFFAFA;
   font-size: 50px;
   line-height: normal;
 }
@@ -45,12 +48,21 @@ h4 {
   font-weight: normal;
 }
 
+h6 {
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0px;
+  color: #FFFAFA;
+  font-size: 25px;
+  line-height: normal;
+}
+
 p {
-    color: #878787;
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 25px;
-    letter-spacing: 0.2px;
+  color: #878787;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 25px;
+  letter-spacing: 0.2px;
 }
 
 strong, span {
@@ -61,7 +73,7 @@ strong, span {
 
 
 /*---------------------------------------
-  Buttons               
+  Buttons
 -----------------------------------------*/
 
 .section-btn {
@@ -85,15 +97,15 @@ strong, span {
 }
 
 .copyrights{
-	text-indent:-9999px;
-	height:0;
-	line-height:0;
-	font-size:0;
-	overflow:hidden;
+  text-indent:-9999px;
+  height:0;
+  line-height:0;
+  font-size:0;
+  overflow:hidden;
 }
 
 /*---------------------------------------
-    General               
+    General
 -----------------------------------------*/
 
 html{
@@ -151,7 +163,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  Pre loader section              
+  Pre loader section
 -----------------------------------------*/
 
 .preloader {
@@ -201,7 +213,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  Navigation section              
+  Navigation section
 -----------------------------------------*/
 
 .custom-navbar {
@@ -209,18 +221,20 @@ a:hover, a:active, a:focus {
   margin-bottom: 0;
   background-color: #ffffff;
   padding-top: 22px;
+
 }
 
 .custom-navbar .navbar-brand {
-  color: #444;
+  color: #FFFAFA;
   font-weight: normal;
-  font-size: 20px;
+  font-size: 30px;
+  padding-left: -20px;
 }
 
 .custom-navbar .nav li a {
-  font-size: 12px;
+  font-size: 30px;
   font-weight: normal;
-  color: #656565;
+  color: #FFFAFA;
   letter-spacing: 1px;
   -webkit-transition: all ease-in-out 0.4s;
   transition: all ease-in-out 0.4s;
@@ -272,36 +286,40 @@ a:hover, a:active, a:focus {
 }
 
 @media(min-width:768px) {
-    .custom-navbar {
-      border-bottom: 0;
-      background: 0 0; 
-    }
-    .custom-navbar.top-nav-collapse {
-      background: #ffffff;
-      box-shadow:0 40px 100px rgba(0,0,0,.2);
-      padding: 10px 0;
-    }
+  .custom-navbar {
+    border-bottom: 0;
+    background: 0 0;
+  }
+  .custom-navbar.top-nav-collapse {
+    background: #ffffff;
+    box-shadow:0 40px 100px rgba(0,0,0,.2);
+    padding: 10px 0;
+  }
 
 }
 
 
 
 /*---------------------------------------
-  Home section              
+  Home section
 -----------------------------------------*/
 
 #home {
   display: -webkit-box;
   display: -webkit-flex;
-   display: -ms-flexbox;
+  display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
   -webkit-align-items: center;
   -ms-flex-align: center;
-   align-items: center;
+  align-items: center;
   height: 100vh;
   position: relative;
   padding-top: 62px;
+  background-image: url('images/bg2.jpg');
+  background-size: cover; /* 使背景图片覆盖整个区域 */
+  background-position: center center; /* 使背景图片居中 */
+  background-repeat: no-repeat; /* 防止背景图片重复 */
 }
 
 #home img {
@@ -311,7 +329,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  About section              
+  About section
 -----------------------------------------*/
 
 #about .section-title {
@@ -338,7 +356,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  Skill section              
+  Skill section
 -----------------------------------------*/
 
 #skill {
@@ -369,7 +387,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  Work section              
+  Work section
 -----------------------------------------*/
 
 #work .work-thumb {
@@ -396,7 +414,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  Contact section              
+  Contact section
 -----------------------------------------*/
 
 #contact .form-control {
@@ -439,7 +457,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  Social icon             
+  Social icon
 -----------------------------------------*/
 
 .social-icon {
@@ -477,7 +495,7 @@ a:hover, a:active, a:focus {
 
 
 /*---------------------------------------
-  Mobile Responsive styles              
+  Mobile Responsive styles
 -----------------------------------------*/
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -500,11 +518,11 @@ a:hover, a:active, a:focus {
 
 @media (max-width: 980px) {
 
- h1 {font-size: 33px;}
+  h1 {font-size: 33px;}
 
- #work .work-thumb {
-  margin-top: 30px;
- }
+  #work .work-thumb {
+    margin-top: 30px;
+  }
 
 }
 
@@ -512,7 +530,7 @@ a:hover, a:active, a:focus {
 @media (max-width: 768px) {
 
   h1 {
-    font-size: 30px;
+    font-size: 20px;
     line-height: normal;
   }
 
@@ -562,3 +580,47 @@ a:hover, a:active, a:focus {
   }
 
 }
+
+.image-row {
+  margin-bottom: 40px; /* 设置图片行的下方间距 */
+}
+
+.image-row .col-md-4 {
+  margin-bottom: 40px; /* 设置图片列之间的间距 */
+}
+
+.custom-img {
+  max-width: 100%; /* 图像的最大宽度为容器的宽度 */
+  height: auto; /* 图像的高度将根据宽度自动调整 */
+}
+
+.image-with-text {
+  position: relative;
+  text-align: center; /* 水平居中图像和文本 */
+}
+
+.text-below-image {
+  position: absolute;
+  bottom: -20px; /* 调整文本距离图片的位置 */
+  left: 0;
+  right: 0;
+  font-size: 16px; /* 设置文字大小 */
+  color: #1C1C1C; /* 设置文字颜色 */
+}
+
+.move-up {
+  margin-top: -115px; /* 调整这个值以实现所需的上移距离 */
+}
+
+.move-left {
+  margin-left: -100px; /* 调整这个值以实现所需的左移距离 */
+}
+
+.image-margin {
+  margin-bottom: 25px; /* 设置底部外边距 */
+}
+
+.text-white {
+  color: white; /* 将字体颜色设置为白色 */
+}
+
